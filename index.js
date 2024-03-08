@@ -124,8 +124,13 @@ refreshButton.addEventListener('click', function () {
 
 copyButton.addEventListener('click', function () {
     // Use Clipboard API if available
+    if (updatedUrl.textContent.length < 5) {
+        macError.textContent = `Enter a valid input URL.`
+        throw new Error(`The input URL is empty: ${updatedUrl.textContent}`)
+    }
     navigator.clipboard.writeText(updatedUrl.textContent);
-    copyButton.classList.add('focus:ring-4')
+    copyButton.classList.add('focus:ring-4', 'bg-blue-500', 'text-white')
+    copyButton.classList.remove('outline-1','outline-blue-500', 'text-blue-500')
 
     $defaultMessage.classList.add('hidden');
     $successMessage.classList.remove('hidden');
@@ -134,6 +139,7 @@ copyButton.addEventListener('click', function () {
     setTimeout(() => {
         $defaultMessage.classList.remove('hidden');
         $successMessage.classList.add('hidden');
-        copyButton.classList.remove('focus:ring')
+        copyButton.classList.remove('focus:ring', 'bg-blue-500', 'text-white')
+        copyButton.classList.add('outline-1', 'outline-blue-500', 'text-blue-500')
     }, 2000);
 });
