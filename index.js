@@ -6,10 +6,13 @@ function autoUpdateDeviceMac(url) {
     const potentialMacParams = [];
     for (const [key, value] of parsedUrl.searchParams.entries()) {
         const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
-        if (macRegex.test(value)) {
+     
+        if (macRegex.test(value) && key != 'ap_mac') {
             potentialMacParams.push(key);
         }
     }
+
+    console.log(potentialMacParams);
 
     // If potential MAC params found, use the first one (or user-provided value)
     let macAddress = document.getElementById('mac-address').value;
@@ -75,37 +78,62 @@ function updateDeviceMac(url, newMac) {
 const refreshButton = document.getElementById('refresh-button');
 const regenButton = document.getElementById('regen-button');
 const updatedUrl = document.getElementById('updated-url');
+const macError = document.getElementById('mac-error');
+
+
 const copyButton = document.getElementById('copy-button');
+const $defaultMessage = document.getElementById('default-message');
+const $successMessage = document.getElementById('success-message');
 
 regenButton.addEventListener('click', function () {
+    macError.textContent = "";
     const originalUrl = document.getElementById('original-url').value;
     try {
         const updatedURL = autoUpdateDeviceMac(originalUrl);
         updatedUrl.textContent = `${updatedURL}`;
+        regenButton.classList.add('focus:ring-4')
+        setTimeout(() => {
+            regenButton.classList.remove('focus:ring-4')
+        })
     } catch (error) {
         console.error(error.message);
-        updatedUrl.textContent = `Error: ${error.message}`;
+        //updatedUrl.textContent = `Error: ${error.message}`;
     }
 });
 
 refreshButton.addEventListener('click', function () {
+    macError.textContent = "";
     const originalUrl = document.getElementById('original-url').value;
     const newMac = document.getElementById('mac-address').value;
+    const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
+    if (!macRegex.test(newMac)) {
+        macError.textContent = `Enter a valid MAC address or Regenerate MAC to get a randomized URL`;
+    }
     try {
         const updatedURL = updateDeviceMac(originalUrl, newMac);
         updatedUrl.textContent = `${updatedURL}`;
+        refreshButton.classList.add('focus:ring-4')
+        setTimeout(() => {
+            refreshButton.classList.remove('focus:ring-4')
+        })
     } catch (error) {
         console.error(error.message);
-        updatedUrl.textContent = `Error: ${error.message}`;
+        //updatedUrl.textContent = `Error: ${error.message}`;
     }
 });
 
 copyButton.addEventListener('click', function () {
-    if (navigator.clipboard) {
-        // Use Clipboard API if available
-        navigator.clipboard.writeText(updatedUrl.textContent);
-    } else {
-        // Use fallback method
-        copyToClipboard(updatedUrl.textContent);
-    }
+    // Use Clipboard API if available
+    navigator.clipboard.writeText(updatedUrl.textContent);
+    copyButton.classList.add('focus:ring-4')
+
+    $defaultMessage.classList.add('hidden');
+    $successMessage.classList.remove('hidden');
+
+    // reset to default state
+    setTimeout(() => {
+        $defaultMessage.classList.remove('hidden');
+        $successMessage.classList.add('hidden');
+        copyButton.classList.remove('focus:ring')
+    }, 2000);
 });
