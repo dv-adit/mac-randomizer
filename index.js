@@ -84,6 +84,7 @@ const macError = document.getElementById('mac-error');
 const copyButton = document.getElementById('copy-button');
 const $defaultMessage = document.getElementById('default-message');
 const $successMessage = document.getElementById('success-message');
+const dynamicLink = document.getElementById('dynamic-link');
 
 regenButton.addEventListener('click', function () {
     macError.textContent = "";
@@ -91,6 +92,7 @@ regenButton.addEventListener('click', function () {
     try {
         const updatedURL = autoUpdateDeviceMac(originalUrl);
         updatedUrl.textContent = `${updatedURL}`;
+        dynamicLink.href = `${updatedURL}`;
         regenButton.classList.add('focus:ring-4')
         setTimeout(() => {
             regenButton.classList.remove('focus:ring-4')
@@ -112,6 +114,7 @@ refreshButton.addEventListener('click', function () {
     try {
         const updatedURL = updateDeviceMac(originalUrl, newMac);
         updatedUrl.textContent = `${updatedURL}`;
+        dynamicLink.href = `${updatedURL}`;
         refreshButton.classList.add('focus:ring-4')
         setTimeout(() => {
             refreshButton.classList.remove('focus:ring-4')
