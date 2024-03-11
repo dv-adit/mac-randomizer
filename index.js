@@ -9,7 +9,7 @@ function autoUpdateDeviceMac(url, param) {
     // Create a URL object
     const parsedUrl = new URL(url);
 
-    let macAddress = parsedUrl.searchParams.get(param); 
+    let macAddress = parsedUrl.searchParams.get(param);
 
     // Split the mac address into octets
     const macOctets = macAddress.split(':');
@@ -34,40 +34,45 @@ function autoUpdateDeviceMac(url, param) {
     return parsedUrl.toString();
 }
 
+const list = document.getElementById('mac-param-list');
 
 function populateMacParamRadioButtons(potentialMacParams) {
-    const container = document.getElementById('mac-param-radio-container');
-    container.innerHTML = ''; // Clear existing radio buttons
+
+
+    list.innerHTML = ''; // Clear existing list items
 
     potentialMacParams.forEach((param, index) => {
-        // Create radio button
-        const radioInput = document.createElement('input');
-        radioInput.id = `bordered-radio-${index}`;
-        radioInput.type = 'radio';
-        radioInput.value = param;
-        radioInput.name = 'bordered-radio';
-        radioInput.classList.add('w-4', 'h-4', 'text-blue-600', 'bg-gray-100', 'border-gray-300', 'focus:ring-blue-500', 'dark:focus:ring-blue-600', 'dark:ring-offset-gray-800', 'focus:ring-2', 'dark:bg-gray-700', 'dark:border-gray-600');
-        
-        // Check the first radio button by default or based on some condition
-        if (index === 0) radioInput.checked = true;
+        const listItem = document.createElement('li');
+        listItem.classList.add('w-full', 'border-b', 'border-gray-200', 'dark:border-gray-600');
 
-        // Create label
+        const div = document.createElement('div');
+        div.classList.add('flex', 'items-center', 'ps-3');
+
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.id = `list-radio-${index}`;
+        input.name = 'list-radio';
+        input.value = param;
+        input.classList.add('w-4', 'h-4', 'text-blue-600', 'bg-gray-100', 'border-gray-300', 'focus:ring-blue-500', 'dark:focus:ring-blue-600', 'dark:ring-offset-gray-700', 'dark:focus:ring-offset-gray-700', 'focus:ring-2', 'dark:bg-gray-600', 'dark:border-gray-500');
+
         const label = document.createElement('label');
-        label.setAttribute('for', radioInput.id);
-        label.classList.add('w-full', 'py-4', 'ms-2', 'text-sm', 'font-medium', 'text-gray-900', 'dark:text-gray-300');
-        label.textContent = param; // Use the parameter as the label text
+        label.setAttribute('for', input.id);
+        label.classList.add('w-full', 'py-3', 'ms-2', 'text-sm', 'font-medium', 'text-gray-900', 'dark:text-gray-300');
+        label.textContent = param; // Use the MAC parameter as the label text
 
-        // Create a container for each radio button
-        const radioContainer = document.createElement('div');
-        radioContainer.classList.add('flex', 'items-center', 'ps-4', 'border', 'border-gray-200', 'rounded', 'dark:border-gray-700');
-        
-        // Append the radio button and label to the container
-        radioContainer.appendChild(radioInput);
-        radioContainer.appendChild(label);
+        // Select first
+        if (index === 0) {
+            input.checked = true;
+        }
 
-        // Append the container to the main container
-        container.appendChild(radioContainer);
+        // Append elements
+        div.appendChild(input);
+        div.appendChild(label);
+        listItem.appendChild(div);
+        list.appendChild(listItem);
     });
+
+
 }
 
 const refreshButton = document.getElementById('refresh-button');
@@ -81,12 +86,13 @@ const $defaultMessage = document.getElementById('default-message');
 const $successMessage = document.getElementById('success-message');
 const dynamicLink = document.getElementById('dynamic-link');
 const originalUrl = document.getElementById('original-url');
-
+const macParamListHeader = document.getElementById('mac-param-list-header');
 
 regenButton.addEventListener('click', () => {
     macError.textContent = "";
     try {
-        const selectedParam = document.querySelector('input[name="bordered-radio"]:checked').value
+        const selectedRadio = document.querySelector('input[name="list-radio"]:checked');
+        const selectedParam = selectedRadio.value;
         const updatedURL = autoUpdateDeviceMac(originalUrl.value, selectedParam);
         updatedUrl.textContent = `${updatedURL}`;
         dynamicLink.href = `${updatedURL}`;
@@ -104,16 +110,16 @@ regenButton.addEventListener('click', () => {
 copyButton.addEventListener('click', () => {
     // Use Clipboard API if available
     try {
-    if (updatedUrl.textContent.length < 5) {
-        macError.textContent = `Enter a valid input URL.`
-        throw new Error(`The input URL is empty: ${updatedUrl.textContent}`)
-    }
-    navigator.clipboard.writeText(updatedUrl.textContent);
-    copyButton.classList.add('focus:ring-4', 'bg-blue-500', 'text-white')
-    copyButton.classList.remove('outline-1','outline-blue-500', 'text-blue-500')
+        if (updatedUrl.textContent.length < 5) {
+            macError.textContent = `Enter a valid input URL.`
+            throw new Error(`The input URL is empty: ${updatedUrl.textContent}`)
+        }
+        navigator.clipboard.writeText(updatedUrl.textContent);
+        copyButton.classList.add('focus:ring-4', 'bg-blue-500', 'text-white')
+        copyButton.classList.remove('outline-1', 'outline-blue-500', 'text-blue-500')
 
-    $defaultMessage.classList.add('hidden');
-    $successMessage.classList.remove('hidden');
+        $defaultMessage.classList.add('hidden');
+        $successMessage.classList.remove('hidden');
     } catch {
         macError.textContent = `Error copying to clipboard. Please try manually.`
     }
@@ -128,13 +134,25 @@ copyButton.addEventListener('click', () => {
 
 originalUrl.addEventListener('input', () => {
 
-    const parsedUrl = new URL(originalUrl.value);
-    const potentialMacParams = [];
-    for (const [key, value] of parsedUrl.searchParams.entries()) {
-        if (isValidMac(value) && !['ap_mac', 'apmac'].includes(key)) {
-            console.log(key);
-            potentialMacParams.push(key);
+ 
+
+    if (originalUrl.value < 1) {
+        list.classList.add('hidden');
+        macParamListHeader.classList.add('hidden')
+    } else {
+
+        const parsedUrl = new URL(originalUrl.value) || "";
+        list.classList.remove('hidden');
+        macParamListHeader.classList.remove('hidden')
+
+        const potentialMacParams = [];
+        for (const [key, value] of parsedUrl.searchParams.entries()) {
+            if (isValidMac(value) && !['ap_mac', 'apmac'].includes(key)) {
+                console.log(key);
+                potentialMacParams.push(key);
+            }
         }
+        populateMacParamRadioButtons(potentialMacParams);
     }
-    populateMacParamRadioButtons(potentialMacParams);
+
 })
