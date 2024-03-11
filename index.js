@@ -1,3 +1,10 @@
+
+// Validate newMac format (6 octets separated by colons)
+const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
+
+// Function to validate MAC address.
+const isValidMac = (mac) => /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i.test(mac);
+
 function autoUpdateDeviceMac(url) {
     // Create a URL object
     const parsedUrl = new URL(url);
@@ -5,9 +12,8 @@ function autoUpdateDeviceMac(url) {
     // Check if any parameter matches a MAC address format
     const potentialMacParams = [];
     for (const [key, value] of parsedUrl.searchParams.entries()) {
-        const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
      
-        if (macRegex.test(value) && (key in ['ap_mac', 'apmac'] === false)) { // Exclude references to AP Mac addresses to remove errors.
+        if (isValidMac(value) && !['ap_mac', 'apmac'].includes(key)) { // Exclude references to AP Mac addresses to remove errors.
             potentialMacParams.push(key);
         }
     }
@@ -36,8 +42,7 @@ function autoUpdateDeviceMac(url) {
     if (potentialMacParams.length > 0) {
         parsedUrl.searchParams.set(potentialMacParams[0], newMac);
     } else {
-        // No matching param found, add a new "mac_address" param
-        parsedUrl.searchParams.set('mac_address', newMac);
+        macError.textContent = `MAC address not found. Please check the input URL.`
     }
 
     // Return the updated URL
@@ -48,17 +53,15 @@ function updateDeviceMac(url, newMac) {
     // Create a URL object
     const parsedUrl = new URL(url);
 
-    // Validate newMac format (6 octets separated by colons)
-    const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
-    if (!macRegex.test(newMac)) {
+    if (!isValidMac(newMac)) {
         throw new Error('Invalid new mac_address format. Must be 6 octets separated by colons (e.g., FF:AA:BB:CC:DD:EE)');
     }
 
     // Check if any parameter matches a MAC address format
     const potentialMacParams = [];
     for (const [key, value] of parsedUrl.searchParams.entries()) {
-        const macRegex = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/i;
-        if (macRegex.test(value)) {
+        if (isValidMac(value) && !['ap_mac', 'apmac'].includes(key)) {
+            console.log(key);
             potentialMacParams.push(key);
         }
     }
@@ -67,8 +70,8 @@ function updateDeviceMac(url, newMac) {
     if (potentialMacParams.length > 0) {
         parsedUrl.searchParams.set(potentialMacParams[0], newMac);
     } else {
-        // No matching param found, add a new "mac_address" param
-        parsedUrl.searchParams.set('mac_address', newMac);
+        // Show error that MAC address not found/supported.
+        macError.textContent = `MAC address not found. Please check the input URL.`
     }
 
     // Return the updated URL
@@ -86,7 +89,7 @@ const $defaultMessage = document.getElementById('default-message');
 const $successMessage = document.getElementById('success-message');
 const dynamicLink = document.getElementById('dynamic-link');
 
-regenButton.addEventListener('click', function () {
+regenButton.addEventListener('click', () => {
     macError.textContent = "";
     const originalUrl = document.getElementById('original-url').value;
     try {
@@ -103,12 +106,12 @@ regenButton.addEventListener('click', function () {
     }
 });
 
-refreshButton.addEventListener('click', function () {
+refreshButton.addEventListener('click',() => {
     macError.textContent = "";
     const originalUrl = document.getElementById('original-url').value;
     const newMac = document.getElementById('mac-address').value;
-    const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
-    if (!macRegex.test(newMac)) {
+    
+    if (!isValidMac(newMac)) {
         macError.textContent = `Enter a valid MAC address or Regenerate MAC to get a randomized URL`;
     }
     try {
@@ -125,8 +128,9 @@ refreshButton.addEventListener('click', function () {
     }
 });
 
-copyButton.addEventListener('click', function () {
+copyButton.addEventListener('click', () => {
     // Use Clipboard API if available
+    try {
     if (updatedUrl.textContent.length < 5) {
         macError.textContent = `Enter a valid input URL.`
         throw new Error(`The input URL is empty: ${updatedUrl.textContent}`)
@@ -137,7 +141,9 @@ copyButton.addEventListener('click', function () {
 
     $defaultMessage.classList.add('hidden');
     $successMessage.classList.remove('hidden');
-
+    } catch {
+        macError.textContent = `Error copying to clipboard. Please try manually.`
+    }
     // reset to default state
     setTimeout(() => {
         $defaultMessage.classList.remove('hidden');
