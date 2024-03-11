@@ -9,22 +9,7 @@ function autoUpdateDeviceMac(url) {
     // Create a URL object
     const parsedUrl = new URL(url);
 
-    // Check if any parameter matches a MAC address format
-    const potentialMacParams = [];
-    for (const [key, value] of parsedUrl.searchParams.entries()) {
-     
-        if (isValidMac(value) && !['ap_mac', 'apmac'].includes(key)) { // Exclude references to AP Mac addresses to remove errors.
-            potentialMacParams.push(key);
-        }
-    }
-
-    console.log(potentialMacParams);
-
-    // If potential MAC params found, use the first one (or user-provided value)
-    let macAddress = document.getElementById('mac-address').value;
-    if (!macAddress && potentialMacParams.length > 0) {
-        macAddress = parsedUrl.searchParams.get(potentialMacParams[0]);
-    }
+    let macAddress = parsedUrl.searchParams.get(param); 
 
     // Split the mac address into octets
     const macOctets = macAddress.split(':');
