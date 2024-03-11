@@ -31,14 +31,14 @@
         <div class="flex justify-center space-x-4 mt-4">
           <button type="button" id="refresh-button"
             class=" hidden outline outline-1 outline-blue-500 text-blue-500 px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white">Update MAC</button>
-          <button type="button" id="regen-button"
+          <button type="button" id="regen-button" data-umami-event="Regnerate MAC button"
             class="outline outline-1 outline-blue-500 text-blue-500 px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white">Regenerate MAC</button>
         </div>
-        <a href="#" id="dynamic-link" class="flex mt-4" target="_blank">
+        <a href="#" id="dynamic-link" class="flex mt-4" target="_blank" data-umami-event="Link opened">
         <div id="updated-url" class="text-blue-500 underline text-center break-all"></div>
       </a>
         <div class="flex justify-center mt-4">
-          <button type="button" id="copy-button" class="outline outline-1 outline-blue-500 text-blue-500 px-4 py-2 rounded-md  hover:bg-blue-500 hover:text-white">
+          <button type="button" id="copy-button" data-umami-event="Copy button" class="outline outline-1 outline-blue-500 text-blue-500 px-4 py-2 rounded-md  hover:bg-blue-500 hover:text-white">
             <span id="default-message">Copy URL</span>
             <span id="success-message" class="hidden">✅ Copied</span>
           </button>
