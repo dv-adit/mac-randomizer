@@ -7,7 +7,7 @@ function autoUpdateDeviceMac(url) {
     for (const [key, value] of parsedUrl.searchParams.entries()) {
         const macRegex = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i;
      
-        if (macRegex.test(value) && key != 'ap_mac') {
+        if (macRegex.test(value) && (key in ['ap_mac', 'apmac'] === false)) { // Exclude references to AP Mac addresses to remove errors.
             potentialMacParams.push(key);
         }
     }
