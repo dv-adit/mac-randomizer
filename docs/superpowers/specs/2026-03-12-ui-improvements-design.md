@@ -65,3 +65,13 @@ Single card, stacked sections separated by small uppercase gray divider labels.
 - Output URLs display with `%3A` encoding (correct — this is valid URL format)
 - Count input generates N independent randomizations on each click of Regenerate
 - Regenerating replaces the previous output list entirely
+- If the user edits or clears the URL input after generation, the Output section hides again
+
+## Edge Cases
+
+- **Invalid/partial URL while typing**: silently ignore parse errors; Options section stays hidden; no inline error shown during typing
+- **Zero MAC params detected**: Options section stays hidden; show a small inline message below the textarea: "No MAC params found in this URL"
+- **Count = 1**: hide the Copy All button (per-row copy is sufficient)
+- **Count out of range**: clamp value to 1–10 on Regenerate (browser `max` attribute is a hint, not enforced on keyboard input); do not show a validation error, just clamp silently
+- **Clipboard API**: use `navigator.clipboard.writeText` (same as existing code); no fallback needed for this tool's use case
+- **Copy All format**: newline-separated (`\n`)
