@@ -1,5 +1,7 @@
 const isValidMac = (mac) => /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/i.test(mac);
 
+const COPY_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
+
 function autoUpdateDeviceMac(url, param) {
     const parsedUrl = new URL(url);
     const macAddress = parsedUrl.searchParams.get(param);
@@ -58,7 +60,7 @@ function renderOutputUrls(urls) {
         btn.type = 'button';
         btn.className = 'shrink-0 text-slate-400 hover:text-slate-600 transition-colors text-lg leading-none';
         btn.title = 'Copy URL';
-        btn.textContent = '📋';
+        btn.innerHTML = COPY_ICON;
         btn.dataset.url = url;
         btn.dataset.umamiEvent = 'Copy URL button';
 
@@ -75,12 +77,12 @@ function renderOutputUrls(urls) {
     }
 }
 
-function showCopyFeedback(button, originalText) {
+function showCopyFeedback(button, originalHTML) {
     clearTimeout(button._copyTimer);
-    button.textContent = '✓';
+    button.innerHTML = '✓';
     button.classList.add('text-green-500');
     button._copyTimer = setTimeout(() => {
-        button.textContent = originalText;
+        button.innerHTML = originalHTML;
         button.classList.remove('text-green-500');
     }, 1500);
 }
@@ -150,7 +152,7 @@ outputList.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-url]');
     if (!btn) return;
     navigator.clipboard.writeText(btn.dataset.url).then(() => {
-        showCopyFeedback(btn, '📋');
+        showCopyFeedback(btn, COPY_ICON);
     }).catch(() => {});
 });
 
