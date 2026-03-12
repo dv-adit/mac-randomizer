@@ -151,11 +151,11 @@ outputList.addEventListener('click', (e) => {
     if (!btn) return;
     navigator.clipboard.writeText(btn.dataset.url).then(() => {
         showCopyFeedback(btn, '📋');
-    });
+    }).catch(() => {});
 });
 
 copyAllButton.addEventListener('click', () => {
     navigator.clipboard.writeText(copyAllButton.dataset.urls).then(() => {
         showCopyFeedback(copyAllButton, 'Copy All');
-    });
+    }).catch(() => {});
 });
