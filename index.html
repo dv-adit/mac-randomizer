@@ -10,49 +10,48 @@
     data-website-id="1dcedebd-7a5c-474e-85e5-e7f72358b5d6"></script>
 </head>
 
-<body class="bg-stone-50 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-  <div
-    class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-lg lg:max-w-3xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-      <h1 class="text-2xl font-bold text-center mb-4">Refresh MAC Tool</h1>
-      <form id="url-form">
-        <div class="grid grid-cols-1 gap-4">
-          <div class="flex items-center">
-            <label for="original-url" class="text-right mr-2">Original URL:</label>
-            <textarea type="text" id="original-url" name="original-url" rows="3" placeholder="Enter your URL here..."
-              class="rounded-md border border-gray-300 px-2 py-1 flex-grow"></textarea>
-          </div>
-          <div id="mac-error" class="flex text-red-500 text-center break-words"></div>
-        </div>
-        <h3 id="mac-param-list-header" class="hidden mb-4 font-semibold text-gray-900 dark:text-white">Identification</h3>
-        <ul id="mac-param-list"
-          class="hidden w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          <!-- List items will be added here dynamically -->
-        </ul>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-8">
+  <div class="w-full max-w-lg bg-white rounded-xl shadow-md">
+    <div class="p-6">
+      <h1 class="text-2xl font-bold text-slate-800 text-center mb-6">Refresh MAC Tool</h1>
 
-        <!-- <h3 class="mb-2 text-gray-900 dark:text-white">Client MAC</h3>
-        <div id="mac-param-radio-container" class="my-radio-button-container">
-          Dynamically created radio buttons will be added here
-        </div> -->
-        <div class="flex justify-center space-x-4 mt-4">
-          <button type="button" id="regen-button" data-umami-event="Regnerate MAC button"
-            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:ring-2">Regenerate
-            MAC</button>
+      <!-- INPUT SECTION -->
+      <div class="border-t border-slate-100 pt-4">
+        <p class="text-xs uppercase tracking-wide text-slate-400 mb-3">Input</p>
+        <textarea id="original-url" rows="6" placeholder="Enter your captive portal URL here..."
+          class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"></textarea>
+        <p id="no-mac-message" class="text-xs text-slate-500 mt-1 hidden">No MAC params found in this URL</p>
+      </div>
+
+      <!-- OPTIONS SECTION -->
+      <div id="options-section" class="border-t border-slate-100 pt-4 mt-4 hidden">
+        <p class="text-xs uppercase tracking-wide text-slate-400 mb-3">Options</p>
+        <ul id="mac-param-list" class="mb-4"></ul>
+        <div class="flex items-center gap-3 mb-4">
+          <label for="url-count" class="text-sm text-slate-600">Number of URLs</label>
+          <input type="number" id="url-count" value="1" min="1" max="10"
+            class="w-20 border border-slate-200 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <a href="#" id="dynamic-link" class="flex mt-4" target="_blank" data-umami-event="Link opened">
-          <div id="updated-url" class="text-blue-500 underline text-center break-all"></div>
-        </a>
-        <div class="flex justify-center mt-4">
-          <button type="button" id="copy-button" data-umami-event="Copy button"
-            class="outline outline-1 outline-blue-500 text-blue-500 px-4 py-2 rounded-md hover:ring-2">
-            <span id="default-message">Copy URL</span>
-            <span id="success-message" class="hidden">✅ Copied</span>
+        <button type="button" id="regen-button" data-umami-event="Regenerate MAC button"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+          Regenerate MAC
+        </button>
+      </div>
+
+      <!-- OUTPUT SECTION -->
+      <div id="output-section" class="border-t border-slate-100 pt-4 mt-4 hidden">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs uppercase tracking-wide text-slate-400">Output</p>
+          <button type="button" id="copy-all-button" data-umami-event="Copy All button"
+            class="hidden text-sm border border-slate-300 text-slate-600 hover:bg-slate-50 px-3 py-1 rounded-lg transition-colors">
+            Copy All
           </button>
         </div>
-      </form>
+        <ul id="output-list" class="space-y-2"></ul>
+      </div>
+
     </div>
   </div>
-
   <script src="index.js"></script>
 </body>
 
