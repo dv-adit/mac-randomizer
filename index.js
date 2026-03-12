@@ -58,7 +58,7 @@ function renderOutputUrls(urls) {
         btn.type = 'button';
         btn.className = 'shrink-0 text-slate-400 hover:text-slate-600 transition-colors text-lg leading-none';
         btn.title = 'Copy URL';
-        btn.textContent = '⎘';
+        btn.textContent = '📋';
         btn.dataset.url = url;
         btn.dataset.umamiEvent = 'Copy URL button';
 
@@ -76,9 +76,10 @@ function renderOutputUrls(urls) {
 }
 
 function showCopyFeedback(button, originalText) {
+    clearTimeout(button._copyTimer);
     button.textContent = '✓';
     button.classList.add('text-green-500');
-    setTimeout(() => {
+    button._copyTimer = setTimeout(() => {
         button.textContent = originalText;
         button.classList.remove('text-green-500');
     }, 1500);
@@ -148,11 +149,13 @@ regenButton.addEventListener('click', () => {
 outputList.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-url]');
     if (!btn) return;
-    navigator.clipboard.writeText(btn.dataset.url);
-    showCopyFeedback(btn, '⎘');
+    navigator.clipboard.writeText(btn.dataset.url).then(() => {
+        showCopyFeedback(btn, '📋');
+    });
 });
 
 copyAllButton.addEventListener('click', () => {
-    navigator.clipboard.writeText(copyAllButton.dataset.urls);
-    showCopyFeedback(copyAllButton, 'Copy All');
+    navigator.clipboard.writeText(copyAllButton.dataset.urls).then(() => {
+        showCopyFeedback(copyAllButton, 'Copy All');
+    });
 });
